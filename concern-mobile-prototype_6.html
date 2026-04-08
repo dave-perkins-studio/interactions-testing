@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Concern Worldwide — Mobile Prototype</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green: #0b7b51;
+    --green-dark: #015d59;
+    --green-deep: #00734a;
+    --red: #cc2936;
+    --white: #ffffff;
+    --off-white: #f5f5f3;
+    --grey: #f0f0ee;
+    --grey-mid: #d8dade;
+    --text: #1a1a1a;
+    --text-muted: #555;
+    --font: 'IBM Plex Sans', sans-serif;
+  }
+
+  html { font-family: var(--font); color: var(--text); background: var(--white); }
+
+  /* ─── RESPONSIVE: fills mobile, caps at tablet ─── */
+  body {
+    max-width: 480px;
+    width: 100%;
+    margin: 0 auto;
+    background: var(--white);
+    box-shadow: 0 0 40px rgba(0,0,0,.12);
+    min-height: 100vh;
+  }
+
+  /* ─── HEADER ─── */
+  .header {
+    background: var(--white);
+    display: flex;
+    align-items: stretch;
+    border-bottom: 1px solid var(--grey-mid);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: 64px;
+    overflow: hidden;
+    transition: transform .28s cubic-bezier(.4,0,.2,1);
+  }
+
+  .header-menu-btn {
+    background: none; border: none; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 2px;
+    padding: 0 16px;
+    flex-shrink: 0;
+  }
+  .header-menu-btn .burger-lines { display: flex; flex-direction: column; gap: 4px; }
+  .header-menu-btn .burger-lines span {
+    display: block; width: 22px; height: 2.5px;
+    background: var(--green); border-radius: 2px;
+  }
+  .header-menu-btn .menu-label {
+    font-size: 10px; font-weight: 700; letter-spacing: .06em;
+    color: var(--green); margin-top: 3px; font-family: var(--font);
+    text-transform: uppercase;
+  }
+
+  .header-logo {
+    flex: 1;
+    display: flex; align-items: center; justify-content: center;
+    text-decoration: none;
+  }
+  .header-logo img { height: 40px; width: auto; display: block; }
+
+  .header-right { display: flex; align-items: stretch; flex-shrink: 0; }
+
+  .header-search-btn {
+    background: none; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 14px; color: var(--green);
+  }
+  .header-search-btn svg { width: 22px; height: 22px; }
+
+  .btn-donate-header {
+    background: #b5003c; color: var(--white);
+    border: none;
+    padding: 0 20px;
+    font-family: var(--font); font-weight: 800;
+    font-size: 14px; cursor: pointer; letter-spacing: .06em;
+    text-decoration: none;
+    display: flex; align-items: center; justify-content: center;
+    text-transform: uppercase; white-space: nowrap;
+  }
+  .btn-donate-header:active { background: #8e002e; }
+
+  /* ─── HERO ─── */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    background: #1a3a2e;
+    min-height: 520px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hero-img {
+    width: 100%; height: 280px;
+    object-fit: cover; object-position: center top;
+    display: block;
+  }
+
+  .hero-content {
+    background: var(--green-dark);
+    padding: 24px 20px 28px;
+    flex: 1;
+  }
+
+  .hero-title {
+    font-size: 22px; font-weight: 700; line-height: 1.25;
+    color: var(--white); margin-bottom: 10px;
+  }
+
+  .hero-subtitle {
+    font-size: 14px; line-height: 1.55;
+    color: rgba(255,255,255,.85); margin-bottom: 20px;
+  }
+
+  .hero-actions { display: flex; flex-direction: column; gap: 12px; }
+
+  .btn-primary {
+    background: var(--white); color: var(--green-dark);
+    border: none; border-radius: 4px;
+    padding: 13px 20px; font-family: var(--font); font-weight: 700;
+    font-size: 15px; cursor: pointer; text-align: center;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    text-decoration: none; letter-spacing: .01em;
+  }
+
+  .btn-primary svg { width: 6px; height: 10px; flex-shrink: 0; }
+
+  .link-learn {
+    color: var(--white); font-size: 14px; font-weight: 600;
+    display: flex; align-items: center; gap: 6px;
+    text-decoration: none; padding: 2px 0;
+  }
+
+  .link-learn svg { width: 6px; height: 10px; }
+
+  /* ─── SECTION HEADING ─── */
+  .section-heading {
+    font-size: 20px; font-weight: 700; color: var(--text);
+    padding: 24px 20px 16px;
+  }
+
+  /* ─── TILE GRID (other ways) ─── */
+  .tiles-section { background: var(--white); }
+
+  .tiles-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--grey-mid);
+    margin: 0;
+  }
+
+  .tile {
+    background: var(--white);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    cursor: pointer;
+    text-decoration: none; color: inherit;
+  }
+
+  .tile-img {
+    width: 100%; aspect-ratio: 4/3;
+    object-fit: cover; display: block;
+  }
+
+  .tile-info {
+    padding: 12px 12px 14px;
+    display: flex; flex-direction: column; gap: 10px; flex: 1;
+  }
+
+  .tile-title { font-size: 13px; font-weight: 700; line-height: 1.3; }
+
+  .btn-tile {
+    border: none; border-radius: 3px;
+    padding: 8px 10px; font-family: var(--font); font-weight: 600;
+    font-size: 12px; cursor: pointer; display: flex;
+    align-items: center; gap: 5px; align-self: flex-start;
+    text-decoration: none;
+  }
+  .btn-tile.secondary { background: var(--green-dark); color: var(--white); }
+  .btn-tile.primary   { background: var(--green); color: var(--white); }
+  .btn-tile.emergency { background: var(--red); color: var(--white); }
+  .btn-tile svg { width: 5px; height: 8px; }
+
+  /* ─── MONEY SECTION ─── */
+  .money-section {
+    background: var(--grey);
+    padding: 28px 20px;
+  }
+
+  .money-logo { margin-bottom: 16px; }
+  .money-logo img { height: 28px; }
+
+  .money-strapline {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--text-muted); margin-bottom: 4px; font-weight: 600;
+  }
+
+  .money-amount {
+    display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px;
+  }
+  .money-large { font-size: 48px; font-weight: 700; color: var(--green-dark); line-height: 1; }
+  .money-sub   { font-size: 14px; color: var(--text-muted); font-weight: 400; }
+
+  .money-desc  { font-size: 14px; line-height: 1.5; color: var(--text); margin-bottom: 16px; }
+  .money-desc strong { color: var(--green-dark); }
+
+  .money-toggle {
+    font-size: 13px; color: var(--green-dark); font-weight: 600;
+    cursor: pointer; display: flex; align-items: center; gap: 5px;
+    background: none; border: none; font-family: var(--font); padding: 0;
+    text-decoration: underline; text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  .money-breakdown {
+    margin-top: 20px;
+    display: none;
+    gap: 12px;
+    flex-direction: column;
+  }
+  .money-breakdown.open { display: flex; }
+
+  .money-item {
+    background: var(--white); border-radius: 6px; padding: 14px;
+    border-left: 3px solid var(--green);
+  }
+
+  .money-item-head {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 6px; gap: 8px;
+  }
+
+  .money-item-label { font-size: 13px; font-weight: 700; color: var(--text); flex: 1; }
+  .money-item-amount { font-size: 20px; font-weight: 700; color: var(--green-dark); white-space: nowrap; }
+  .money-item-p { font-size: 12px; line-height: 1.5; color: var(--text-muted); }
+
+  /* ─── MORE WAYS ─── */
+  .more-ways { padding: 0 0 4px; background: var(--white); }
+
+  .more-ways-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 0; border-top: 1px solid var(--grey-mid);
+  }
+
+  .more-ways-item {
+    padding: 18px 14px;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 8px; text-align: center;
+    border-right: 1px solid var(--grey-mid);
+    border-bottom: 1px solid var(--grey-mid);
+    text-decoration: none; color: var(--text);
+    cursor: pointer;
+  }
+  .more-ways-item:nth-child(2n) { border-right: none; }
+
+  .more-ways-icon { width: 40px; height: 40px; }
+  .more-ways-label { font-size: 12px; font-weight: 600; line-height: 1.3; }
+
+  /* ─── NEWS ─── */
+  .news-section { background: var(--white); }
+
+  .news-list { display: flex; flex-direction: column; }
+
+  .news-item {
+    display: flex; gap: 14px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--grey-mid);
+    text-decoration: none; color: inherit;
+    cursor: pointer;
+  }
+
+  .news-item-img {
+    width: 88px; height: 60px;
+    object-fit: cover; border-radius: 3px; flex-shrink: 0;
+  }
+
+  .news-item-body { flex: 1; min-width: 0; }
+
+  .news-tag {
+    display: inline-block; font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .08em;
+    color: var(--green-dark); margin-bottom: 4px;
+  }
+
+  .news-date { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
+
+  .news-title {
+    font-size: 13px; font-weight: 600; line-height: 1.35;
+    color: var(--text); display: -webkit-box;
+    -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+  }
+
+  .btn-all-news {
+    display: block; margin: 16px 20px 4px; padding: 13px 20px;
+    border: 2px solid var(--green-dark); color: var(--green-dark);
+    background: var(--white); border-radius: 4px;
+    font-family: var(--font); font-weight: 700; font-size: 14px;
+    text-align: center; cursor: pointer; text-decoration: none;
+    letter-spacing: .01em;
+  }
+
+  /* ─── WHAT WE DO ─── */
+  .what-section { background: var(--grey); padding-bottom: 8px; }
+
+  .what-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1px; background: var(--grey-mid); margin: 0;
+  }
+
+  .what-card {
+    background: var(--white); overflow: hidden;
+    text-decoration: none; color: inherit; cursor: pointer;
+    display: flex; flex-direction: column;
+  }
+
+  .what-card-img {
+    width: 100%; aspect-ratio: 16/9;
+    object-fit: cover; display: block;
+  }
+
+  .what-card-body { padding: 10px 12px 12px; flex: 1; }
+
+  .what-card-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .what-card-desc  { font-size: 11px; line-height: 1.45; color: var(--text-muted); }
+
+  /* ─── IMPACT ─── */
+  .impact-section {
+    background: var(--green-dark); color: var(--white);
+    padding: 28px 20px;
+  }
+
+  .impact-section .section-heading { color: var(--white); padding: 0 0 20px; }
+
+  .impact-list { display: flex; flex-direction: column; gap: 20px; }
+
+  .impact-item { display: flex; align-items: center; gap: 16px; }
+
+  .impact-icon { width: 52px; height: 52px; flex-shrink: 0; }
+
+  .impact-number {
+    font-size: 28px; font-weight: 700; line-height: 1;
+    color: var(--white);
+  }
+
+  .impact-label { font-size: 13px; color: rgba(255,255,255,.8); margin-top: 2px; }
+
+  /* ─── CTA BANNER ─── */
+  .cta-banner {
+    position: relative; overflow: hidden;
+    background: var(--green-dark);
+  }
+
+  .cta-banner-img {
+    width: 100%; height: 200px; object-fit: cover; display: block;
+    filter: brightness(.55);
+  }
+
+  .cta-banner-body {
+    padding: 20px 20px 28px;
+    background: var(--green-dark);
+  }
+
+  .cta-banner-title {
+    font-size: 22px; font-weight: 700; color: var(--white); margin-bottom: 16px;
+  }
+
+  .cta-stats {
+    list-style: none; display: flex; flex-direction: column;
+    gap: 8px; margin-bottom: 20px;
+  }
+
+  .cta-stats li {
+    font-size: 13px; color: rgba(255,255,255,.85);
+    padding-left: 16px; position: relative; line-height: 1.4;
+  }
+
+  .cta-stats li::before {
+    content: '→'; position: absolute; left: 0;
+    color: rgba(255,255,255,.5); font-size: 11px; top: 1px;
+  }
+
+  .btn-cta-donate {
+    background: var(--white); color: var(--green-dark);
+    border: none; border-radius: 4px;
+    padding: 14px 24px; font-family: var(--font); font-weight: 700;
+    font-size: 15px; cursor: pointer; display: flex;
+    align-items: center; gap: 8px; text-decoration: none;
+    width: 100%; justify-content: center;
+  }
+
+  .btn-cta-donate svg { width: 6px; height: 10px; }
+
+  /* ─── HOW YOU CAN HELP ─── */
+  .help-section { background: var(--off-white); padding-bottom: 8px; }
+
+  .help-grid {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+    border-top: 1px solid var(--grey-mid);
+  }
+
+  .help-item {
+    padding: 18px 8px 16px;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 8px; text-align: center;
+    border-right: 1px solid var(--grey-mid);
+    border-bottom: 1px solid var(--grey-mid);
+    text-decoration: none; color: var(--text);
+    cursor: pointer;
+  }
+  .help-item:nth-child(3n) { border-right: none; }
+
+  .help-icon { width: 36px; height: 36px; }
+  .help-label { font-size: 11px; font-weight: 600; line-height: 1.3; }
+
+  /* ─── FOOTER ─── */
+  .footer { background: var(--green-dark); color: rgba(255,255,255,.85); }
+
+  .footer-menu { padding: 28px 20px 20px; }
+
+  .footer-group { margin-bottom: 20px; }
+  .footer-group-title {
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .08em; color: var(--white); margin-bottom: 10px;
+  }
+  .footer-links { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+  .footer-links a {
+    font-size: 13px; color: rgba(255,255,255,.75);
+    text-decoration: none;
+  }
+
+  .footer-social {
+    display: flex; gap: 16px; padding: 16px 20px;
+    border-top: 1px solid rgba(255,255,255,.15);
+    border-bottom: 1px solid rgba(255,255,255,.15);
+  }
+
+  .footer-social a {
+    color: rgba(255,255,255,.7); display: flex;
+    align-items: center; justify-content: center;
+    width: 36px; height: 36px;
+    background: rgba(255,255,255,.08); border-radius: 50%;
+  }
+  .footer-social svg { width: 16px; height: 16px; }
+
+  .footer-bottom {
+    padding: 16px 20px 28px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+
+  .footer-logos { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .footer-logos img { height: 28px; filter: brightness(0) invert(1) opacity(.65); }
+
+  .footer-copy { font-size: 11px; line-height: 1.55; color: rgba(255,255,255,.5); }
+
+  .footer-small-links {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    font-size: 11px;
+  }
+  .footer-small-links a {
+    color: rgba(255,255,255,.55); text-decoration: none;
+  }
+
+  /* ─── SCROLL BEHAVIOURS ─── */
+  .header {
+    transition: transform .28s cubic-bezier(.4,0,.2,1);
+  }
+  .header.hidden {
+    transform: translateY(-100%);
+  }
+
+  /* ─── BOTTOM DONATION BAR ─── */
+  .bottom-bar {
+    position: fixed;
+    bottom: 0; left: 50%; transform: translateX(-50%) translateY(100%);
+    width: 100%; max-width: 480px;
+    background: var(--green-dark);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px 18px;
+    z-index: 200;
+    transition: transform .28s cubic-bezier(.4,0,.2,1);
+    box-shadow: 0 -2px 16px rgba(0,0,0,.18);
+  }
+
+  .bottom-bar.visible {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .bottom-bar-label {
+    font-family: var(--font); font-weight: 700;
+    font-size: 15px; color: var(--white);
+    letter-spacing: .01em;
+  }
+
+  .bottom-bar-btn {
+    background: #b5003c;
+    color: var(--white);
+    border: none; border-radius: 50px;
+    padding: 12px 22px;
+    font-family: var(--font); font-weight: 700; font-size: 15px;
+    display: flex; align-items: center; gap: 10px;
+    cursor: pointer; letter-spacing: .01em;
+    text-decoration: none;
+    transition: background .15s;
+  }
+
+  .bottom-bar-btn:active { background: #8e002e; }
+
+  .bottom-bar-btn-heart {
+    width: 18px; height: 18px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* pad page bottom so content isn't hidden behind bar */
+  body { padding-bottom: 72px; }
+
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <!-- Left: hamburger + MENU -->
+  <button class="header-menu-btn" aria-label="Open menu">
+    <div class="burger-lines">
+      <span></span><span></span><span></span>
+    </div>
+    <span class="menu-label">Menu</span>
+  </button>
+
+  <!-- Centre: logo PNG -->
+  <a class="header-logo" href="#" aria-label="Concern Worldwide home">
+    <img src="data:image/png;base64,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" alt="Concern Worldwide" />
+  </a>
+
+  <!-- Right: search + donate -->
+  <div class="header-right">
+    <button class="header-search-btn" aria-label="Search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7.5"/><line x1="20" y1="20" x2="15.8" y2="15.8"/></svg>
+    </button>
+    <a href="#" class="btn-donate-header">Donate</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <img class="hero-img"
+    src="https://admin.concern.net/sites/default/files/styles/hero_mobile_vertical_x2/public/media/images/2025-10/RS87467__lpr.jpg"
+    alt="Children queue for aid in Gaza."
+  />
+  <div class="hero-content">
+    <h1 class="hero-title">Conflict is forcing families into hunger. Help them survive.</h1>
+    <p class="hero-subtitle">Crises like those in Gaza, Sudan, Yemen and Somalia are driving catastrophic levels of hunger. Your donation can save lives.</p>
+    <div class="hero-actions">
+      <a href="#" class="btn-primary">
+        Donate now
+        <svg viewBox="0 0 6 10" fill="none"><path stroke="#015d59" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m1 9 4-4-4-4"/></svg>
+      </a>
+      <a href="#" class="link-learn">
+        Learn more
+        <svg viewBox="0 0 6 10" fill="none"><path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m1 9 4-4-4-4"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- OTHER WAYS TO HELP -->
+<section class="tiles-section">
+  <h2 class="section-heading">Other ways to help</h2>
+  <div class="tiles-grid">
+
+    <a href="#" class="tile">
+      <img class="tile-img" src="https://admin.concern.net/sites/default/files/styles/two_three_tiles_square_x2/public/media/images/2026-03/RS95419__lpr.jpg" alt="East Africa Drought"/>
+      <div class="tile-info">
+        <span class="tile-title">East Africa Drought Appeal</span>
+        <a href="#" class="btn-tile secondary">
+          Donate
+          <svg viewBox="0 0 6 10" fill="none"><path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m1 9 4-4-4-4"/></svg>
+        </a>
+      </div>
+    </a>
+
+    <a href="#" class="tile">
+      <img class="tile-img" src="https://admin.concern.net/sites/default/files/styles/two_three_tiles_square_x2/public/media/images/2026-02/RS91493__lpr.jpg" alt="Child Hunger"/>
+      <div class="tile-info">
+        <span class="tile-title">Child Hunger Appeal</span>
+        <a href="#" class="btn-tile primary">
+          Donate now
+          <svg viewBox="0 0 6 10" fill="none"><path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m1 9 4-4-4-4"/></svg>
+        </a>
+      </div>
+    </a>
+
+    <a href="#" class="tile">
+      <img class="tile-img" src="https://admin.concern.net/sites/default/files/styles/two_three_tiles_square_x2/public/media/images/2024-05/RS82490__lpr.jpg" alt="Gaza Crisis"/>
+      <div class="tile-info">
+        <span class="tile-title">Gaza Crisis Appeal</span>
+        <a href="#" class="btn-tile emergency">
+          Donate now
+          <svg viewBox="0 0 6 10" fill="none"><path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m1 9 4-4-4-4"/></svg>
+        </a>
+      </div>
+    </a>
+
+    <a href="#" class="tile">
+      <img class="tile-img" src="https://admin.concern.net/sites/default/files/styles/two_three_tiles_square_x2/public/media/images/2024-04/WaitingGame_New3.jpg" alt="End the Wait"/>
+      <div class="tile-info">
+        <span class="tile-title">End the Wait Appeal</span>
+        <a href="#" class="btn-tile primary">
+          Donate now
+          <svg viewBox="0 0 6 10" fill="none"><path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m1 9 4-4-4-4"/></svg>
+        </a>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- WHERE DOES MY MONEY GO -->
+<section class="money-section">
+  <p class="money-strapline">How do we use each euro donated?</p>
+  <div class="money-amount">
+    <span class="money-large">88.2c</span>
+    <span class="money-sub">of every €1</span>
+  </div>
+  <p class="money-desc">goes directly towards our goal of <strong>ending extreme poverty.</strong></p>
+  <button class="money-toggle" onclick="toggleBreakdown(this)">
+    See how the rest is spent ▾
+  </button>
+  <div class="money-breakdown" id="money-breakdown">
+    <div class="money-item">
+      <div class="money-item-head">
+        <span class="money-item-label">Fundraising</span>
+        <span class="money-item-amount">8.6c</span>
+      </div>
+      <p class="money-item-p">is spent to raise funds for Concern's work and highlight the needs of the communities we work with.</p>
+    </div>
+    <div class="money-item">
+      <div class="money-item-head">
+        <span class="money-item-label">Global Citizenship &amp; Advocacy</span>
+        <span class="money-item-amount">2.7c</span>
+      </div>
+      <p class="money-item-p">is invested in influencing policies and deepening awareness on issues around global poverty with the public.</p>
+    </div>
+    <div class="money-item">
+      <div class="money-item-head">
+        <span class="money-item-label">Governance</span>
+        <span class="money-item-amount">0.5c</span>
+      </div>
+      <p class="money-item-p">is spent to ensure Concern Worldwide is managed efficiently and adheres to the highest standards.</p>
+    </div>
+  </div>
+</section>
+
+<!-- MORE WAYS TO DONATE -->
+<section class="more-ways">
+  <h2 class="section-heading">More ways to donate</h2>
+  <div class="more-ways-grid">
+    <a href="#" class="more-ways-item">
+      <img class="more-ways-icon" src="/static/icons/pen-and-paper.svg" alt="" onerror="this.style.display='none'"/>
+      <svg class="more-ways-icon" viewBox="0 0 48 48" fill="none" style="display:none" id="will-icon">
+        <rect width="48" height="48" rx="24" fill="#e8f4ed"/>
+        <path d="M18 14h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H18a2 2 0 0 1-2-2V16a2 2 0 0 1 2-2z" stroke="#0b7b51" stroke-width="1.5" fill="none"/>
+        <line x1="21" y1="20" x2="27" y2="20" stroke="#0b7b51" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="21" y1="24" x2="27" y2="24" stroke="#0b7b51" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="21" y1="28" x2="25" y2="28" stroke="#0b7b51" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <span class="more-ways-label">Leave a gift in your will</span>
+    </a>
+    <a href="#" class="more-ways-item">
+      <svg class="more-ways-icon" viewBox="0 0 48 48" fill="none">
+        <rect width="48" height="48" rx="24" fill="#e8f4ed"/>
+        <circle cx="24" cy="18" r="6" stroke="#0b7b51" stroke-width="1.5" fill="none"/>
+        <path d="M14 36c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="#0b7b51" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <path d="M28 26l4 2 4-2" stroke="#0b7b51" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+      </svg>
+      <span class="more-ways-label">Help us claim tax back</span>
+    </a>
+    <a href="#" class="more-ways-item">
+      <svg class="more-ways-icon" viewBox="0 0 48 48" fill="none">
+        <rect width="48" height="48" rx="24" fill="#e8f4ed"/>
+        <path d="M20 30V18l8 6-8 6z" fill="#0b7b51"/>
+      </svg>
+      <span class="more-ways-label">Fundraise for Concern</span>
+    </a>
+    <a href="#" class="more-ways-item">
+      <svg class="more-ways-icon" viewBox="0 0 48 48" fill="none">
+        <rect width="48" height="48" rx="24" fill="#e8f4ed"/>
+        <path d="M24 14c2.2 0 4 1.8 4 4 0 2.8-4 8-4 8s-4-5.2-4-8c0-2.2 1.8-4 4-4z" fill="#0b7b51"/>
+        <path d="M16 32c0-3 3.6-5 8-5s8 2 8 5" stroke="#0b7b51" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      </svg>
+      <span class="more-ways-label">Become a corporate supporter</span>
+    </a>
+  </div>
+</section>
+
+<!-- LATEST NEWS -->
+<section class="news-section">
+  <h2 class="section-heading">Latest news from our world</h2>
+  <div class="news-list">
+
+    <a href="#" class="news-item">
+      <img class="news-item-img" src="https://admin.concern.net/sites/default/files/styles/latest_news_normal/public/media/images/2026-04/RS96303_.jpg" alt="Sudan / Chad"/>
+      <div class="news-item-body">
+        <span class="news-tag">Story</span>
+        <p class="news-date">7 April 2026</p>
+        <p class="news-title">Sudan: A regional crisis. How Concern is responding in Chad.</p>
+      </div>
+    </a>
+
+    <a href="#" class="news-item">
+      <img class="news-item-img" src="https://admin.concern.net/sites/default/files/styles/latest_news_normal/public/media/images/2026-03/Concern%20South%20Sudan%20Ajok%20Deng.jpg" alt="South Sudan"/>
+      <div class="news-item-body">
+        <span class="news-tag">Press release</span>
+        <p class="news-date">26 March 2026</p>
+        <p class="news-title">Concern supports 30,000 people in South Sudan with healthcare and cash assistance</p>
+      </div>
+    </a>
+
+    <a href="#" class="news-item">
+      <img class="news-item-img" src="https://admin.concern.net/sites/default/files/styles/latest_news_normal/public/media/images/2026-03/concern-rs92144-yemen-crisis-banner.jpg" alt="Yemen"/>
+      <div class="news-item-body">
+        <span class="news-tag">Story</span>
+        <p class="news-date">26 March 2026</p>
+        <p class="news-title">The crisis in Yemen, explained</p>
+      </div>
+    </a>
+
+    <a href="#" class="news-item">
+      <img class="news-item-img" src="https://admin.concern.net/sites/default/files/styles/latest_news_normal/public/media/images/2024-11/concern-rs80593-bangladesh-wash-climate-change.jpeg" alt="Bangladesh"/>
+      <div class="news-item-body">
+        <span class="news-tag">Story</span>
+        <p class="news-date">26 March 2026</p>
+        <p class="news-title">10 solutions to the water crisis – and why they work</p>
+      </div>
+    </a>
+
+    <a href="#" class="news-item">
+      <img class="news-item-img" src="https://admin.concern.net/sites/default/files/styles/latest_news_normal/public/media/images/2026-03/concern-rs88947-drc-crisis-emergency-response.jpg" alt="DRC"/>
+      <div class="news-item-body">
+        <span class="news-tag">News</span>
+        <p class="news-date">26 March 2026</p>
+        <p class="news-title">The Democratic Republic of the Congo crisis, explained</p>
+      </div>
+    </a>
+
+  </div>
+  <a href="#" class="btn-all-news">See all news</a>
+</section>
+
+<!-- WHAT WE DO -->
+<section class="what-section">
+  <h2 class="section-heading">What we do</h2>
+  <div class="what-grid">
+
+    <a href="#" class="what-card">
+      <img class="what-card-img" src="https://admin.concern.net/sites/default/files/styles/section_focus_card_mobile/public/media/images/2024-01/RS72640__lpr_0.jpg" alt="Emergencies"/>
+      <div class="what-card-body">
+        <p class="what-card-title">Emergencies</p>
+        <p class="what-card-desc">We act quickly to save lives in emergency situations.</p>
+      </div>
+    </a>
+
+    <a href="#" class="what-card">
+      <img class="what-card-img" src="https://admin.concern.net/sites/default/files/styles/section_focus_card_mobile/public/media/images/2024-04/RS75369_.jpg" alt="Livelihoods"/>
+      <div class="what-card-body">
+        <p class="what-card-title">Livelihoods</p>
+        <p class="what-card-desc">Secure livelihoods offer a pathway out of poverty.</p>
+      </div>
+    </a>
+
+    <a href="#" class="what-card">
+      <img class="what-card-img" src="https://admin.concern.net/sites/default/files/styles/section_focus_card_mobile/public/media/images/2024-04/RS75325_.jpg" alt="Health"/>
+      <div class="what-card-body">
+        <p class="what-card-title">Health &amp; nutrition</p>
+        <p class="what-card-desc">Helping the most vulnerable stay healthy and nourished.</p>
+      </div>
+    </a>
+
+    <a href="#" class="what-card">
+      <img class="what-card-img" src="https://admin.concern.net/sites/default/files/styles/section_focus_card_mobile/public/media/images/2024-04/RS81139_.jpg" alt="Education"/>
+      <div class="what-card-body">
+        <p class="what-card-title">Education</p>
+        <p class="what-card-desc">Breaking the poverty cycle through access to education.</p>
+      </div>
+    </a>
+
+    <a href="#" class="what-card">
+      <img class="what-card-img" src="https://admin.concern.net/sites/default/files/styles/section_focus_card_mobile/public/media/images/2024-04/RS76242_.jpg" alt="Gender equality"/>
+      <div class="what-card-body">
+        <p class="what-card-title">Gender equality</p>
+        <p class="what-card-desc">A key focus across all our programmes.</p>
+      </div>
+    </a>
+
+    <a href="#" class="what-card">
+      <img class="what-card-img" src="https://admin.concern.net/sites/default/files/styles/section_focus_card_mobile/public/media/images/2024-04/Smaller%20Climate.png" alt="Climate"/>
+      <div class="what-card-body">
+        <p class="what-card-title">Climate &amp; environment</p>
+        <p class="what-card-desc">Helping communities build resilience for the future.</p>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- IMPACT -->
+<section class="impact-section">
+  <h2 class="section-heading">Our impact in 2024</h2>
+  <div class="impact-list">
+    <div class="impact-item">
+      <img class="impact-icon" src="https://admin.concern.net/sites/default/files/media/icons/2022-12/People-targeted%201_0.png" alt=""/>
+      <div>
+        <p class="impact-number">16.8 M</p>
+        <p class="impact-label">people reached through our emergency response</p>
+      </div>
+    </div>
+    <div class="impact-item">
+      <img class="impact-icon" src="https://admin.concern.net/sites/default/files/media/icons/2022-12/Layer%202%20%282%29.png" alt=""/>
+      <div>
+        <p class="impact-number">5 M</p>
+        <p class="impact-label">people reached through our health interventions</p>
+      </div>
+    </div>
+    <div class="impact-item">
+      <img class="impact-icon" src="https://admin.concern.net/sites/default/files/media/icons/2022-12/icon-money-wheat.png" alt=""/>
+      <div>
+        <p class="impact-number">2.6 M</p>
+        <p class="impact-label">people reached through our livelihoods programmes</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GAZA CTA -->
+<section class="cta-banner">
+  <img class="cta-banner-img" src="https://admin.concern.net/sites/default/files/styles/primary_cta_mobile/public/media/images/2024-05/RS82490__lpr.jpg" alt="Gaza"/>
+  <div class="cta-banner-body">
+    <h2 class="cta-banner-title">Gaza Crisis Appeal</h2>
+    <ul class="cta-stats">
+      <li>1.6 million people at crisis levels of hunger</li>
+      <li>1 in 8 people are facing food shortages</li>
+      <li>70,000 people have been killed</li>
+    </ul>
+    <a href="#" class="btn-cta-donate">
+      Donate now
+      <svg viewBox="0 0 6 10" fill="none"><path stroke="#015d59" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m1 9 4-4-4-4"/></svg>
+    </a>
+  </div>
+</section>
+
+<!-- HOW YOU CAN HELP -->
+<section class="help-section">
+  <h2 class="section-heading">How you can help</h2>
+  <div class="help-grid">
+    <a href="#" class="help-item">
+      <svg class="help-icon" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="4" fill="#e8f4ed"/><path d="M28 20a4 4 0 1 0-8 0 4 4 0 0 0 8 0z" fill="#0b7b51"/><path d="M16 30a8 8 0 0 1 16 0" stroke="#0b7b51" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      <span class="help-label">Buy a gift</span>
+    </a>
+    <a href="#" class="help-item">
+      <svg class="help-icon" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="4" fill="#e8f4ed"/><path d="M18 14h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H18a2 2 0 0 1-2-2V16a2 2 0 0 1 2-2z" stroke="#0b7b51" stroke-width="1.5" fill="none"/><line x1="21" y1="20" x2="27" y2="20" stroke="#0b7b51" stroke-width="1.5" stroke-linecap="round"/><line x1="21" y1="24" x2="27" y2="24" stroke="#0b7b51" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <span class="help-label">Leave a gift in your will</span>
+    </a>
+    <a href="#" class="help-item">
+      <svg class="help-icon" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="4" fill="#e8f4ed"/><path d="M24 12c6 0 10 4 10 10 0 8-10 16-10 16S14 30 14 22c0-6 4-10 10-10z" fill="#0b7b51"/></svg>
+      <span class="help-label">Corporate supporter</span>
+    </a>
+    <a href="#" class="help-item">
+      <svg class="help-icon" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="4" fill="#e8f4ed"/><circle cx="24" cy="20" r="6" stroke="#0b7b51" stroke-width="1.5" fill="none"/><path d="M14 36c0-5.5 4.5-10 10-10s10 4.5 10 10" stroke="#0b7b51" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      <span class="help-label">Volunteer with Concern</span>
+    </a>
+    <a href="#" class="help-item">
+      <svg class="help-icon" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="4" fill="#e8f4ed"/><path d="M20 30V18l8 6-8 6z" fill="#0b7b51"/></svg>
+      <span class="help-label">Fundraise for Concern</span>
+    </a>
+    <a href="#" class="help-item">
+      <svg class="help-icon" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="4" fill="#e8f4ed"/><rect x="14" y="20" width="20" height="14" rx="2" stroke="#0b7b51" stroke-width="1.5" fill="none"/><path d="M19 20v-4a5 5 0 0 1 10 0v4" stroke="#0b7b51" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      <span class="help-label">Donate now</span>
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-menu">
+    <div class="footer-group">
+      <p class="footer-group-title">News &amp; publications</p>
+      <ul class="footer-links">
+        <li><a href="#">Latest news</a></li>
+        <li><a href="#">Knowledge Hub</a></li>
+      </ul>
+    </div>
+    <div class="footer-group">
+      <p class="footer-group-title">Vacancies</p>
+      <ul class="footer-links">
+        <li><a href="#">Jobs in Ireland</a></li>
+        <li><a href="#">International jobs</a></li>
+        <li><a href="#">Volunteering</a></li>
+      </ul>
+    </div>
+    <div class="footer-group">
+      <p class="footer-group-title">About us</p>
+      <ul class="footer-links">
+        <li><a href="#">Annual reports</a></li>
+        <li><a href="#">How we spend your money</a></li>
+        <li><a href="#">How we are governed</a></li>
+      </ul>
+    </div>
+    <div class="footer-group">
+      <p class="footer-group-title">Get in touch</p>
+      <ul class="footer-links">
+        <li><a href="#">Contact us</a></li>
+        <li><a href="#">Make a complaint</a></li>
+        <li><a href="#">Media room</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-social">
+    <a href="#" aria-label="Facebook">
+      <svg viewBox="0 0 17 16" fill="currentColor"><path d="M16.271 8.167a8 8 0 1 0-9.932 7.764v-5.32H4.69V8.168h1.65V7.114c0-2.723 1.232-3.985 3.906-3.985.507 0 1.381.1 1.739.198v2.216c-.189-.02-.517-.03-.924-.03-1.312 0-1.819.498-1.819 1.79v.864h2.613l-.449 2.445H9.241v5.496a8 8 0 0 0 7.03-7.941"/></svg>
+    </a>
+    <a href="#" aria-label="Instagram">
+      <svg viewBox="0 0 17 16" fill="currentColor"><path d="M8.272 0C6.099 0 5.827.01 4.973.048c-.851.04-1.433.174-1.941.372a3.9 3.9 0 0 0-1.418.922A3.9 3.9 0 0 0 .691 2.76C.493 3.27.358 3.85.32 4.701.281 5.554.271 5.827.271 8s.01 2.444.049 3.298c.039.851.174 1.433.371 1.941a3.9 3.9 0 0 0 .923 1.418 3.9 3.9 0 0 0 1.417.923c.509.198 1.09.333 1.942.372.853.039 1.125.048 3.298.048s2.445-.01 3.298-.048c.852-.04 1.434-.174 1.943-.372a3.9 3.9 0 0 0 1.416-.923 3.9 3.9 0 0 0 .923-1.417c.197-.51.332-1.09.372-1.942.038-.853.048-1.125.048-3.298s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941A3.9 3.9 0 0 0 13.51.42C13 .222 12.419.087 11.567.048S10.443 0 8.269 0zm-.718 1.442h.718c2.136 0 2.39.007 3.233.046.78.035 1.203.166 1.485.275a2.5 2.5 0 0 1 .92.598 2.5 2.5 0 0 1 .598.92c.11.282.24.705.276 1.485.038.844.046 1.097.046 3.232s-.008 2.388-.046 3.232c-.036.78-.166 1.203-.276 1.485a2.5 2.5 0 0 1-.599.919 2.5 2.5 0 0 1-.919.598c-.282.11-.705.24-1.485.276-.844.038-1.097.047-3.233.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.5 2.5 0 0 1-.92-.598 2.5 2.5 0 0 1-.599-.92c-.11-.282-.24-.705-.275-1.485C1.278 10.39 1.27 10.136 1.27 8s.007-2.388.046-3.232c.035-.78.166-1.203.275-1.485a2.5 2.5 0 0 1 .599-.92 2.5 2.5 0 0 1 .92-.599c.282-.11.705-.24 1.485-.275.738-.034 1.024-.044 2.515-.045zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92m-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217m0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334"/></svg>
+    </a>
+    <a href="#" aria-label="Twitter/X">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M12.6.667h2.454l-5.36 6.126 6.305 8.337h-4.937l-3.867-5.056L2.77 15.13H.315L6.05 8.576-.001.667h5.063l3.496 4.621zm-.86 12.994h1.359L4.323 2.058H2.865z"/></svg>
+    </a>
+    <a href="#" aria-label="YouTube">
+      <svg viewBox="0 0 27 19" fill="currentColor"><path d="M25.806 2.943a3.34 3.34 0 0 0-2.33-2.38C21.421 0 13.18 0 13.18 0S4.936 0 2.88.563a3.34 3.34 0 0 0-2.33 2.38C0 5.043 0 9.424 0 9.424s0 4.38.55 6.481a3.34 3.34 0 0 0 2.331 2.38c2.055.563 10.298.563 10.298.563s8.242 0 10.297-.563a3.34 3.34 0 0 0 2.33-2.38c.551-2.1.551-6.481.551-6.481s0-4.381-.55-6.48"/><path d="m10.241 13.571 7.449-4.07-7.449-4.072z" fill="#fff"/></svg>
+    </a>
+    <a href="#" aria-label="LinkedIn">
+      <svg viewBox="0 0 17 17" fill="currentColor"><path d="M14.976.167c.607 0 1.143.536 1.143 1.179v13.678a1.15 1.15 0 0 1-1.143 1.143H1.226c-.607 0-1.107-.5-1.107-1.143V1.346C.12.703.62.167 1.226.167zM4.941 13.881V6.274H2.583v7.607zM3.762 5.203c.75 0 1.357-.607 1.357-1.357s-.607-1.393-1.357-1.393c-.786 0-1.393.643-1.393 1.393s.607 1.357 1.393 1.357m10.071 8.678V9.703c0-2.036-.464-3.643-2.857-3.643-1.143 0-1.928.643-2.25 1.25h-.035V6.274H6.44v7.607h2.357v-3.75c0-1 .178-1.964 1.428-1.964 1.215 0 1.215 1.143 1.215 2v3.714z"/></svg>
+    </a>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="footer-logos">
+      <img src="https://admin.concern.net/sites/default/files/styles/footer_logos/public/media/icons/2025-05/IrishAid_Std_Colour_DFAT.png" alt="Irish Aid"/>
+      <img src="https://admin.concern.net/sites/default/files/styles/footer_logos/public/media/icons/2021-03/Dfid%20logo2.jpg" alt="UK Aid"/>
+      <img src="https://admin.concern.net/sites/default/files/styles/footer_logos/public/media/icons/2019-12/flag_yellow_low.jpg" alt="EU"/>
+      <img src="https://admin.concern.net/sites/default/files/styles/footer_logos/public/media/icons/2019-05/united%20nations%20logo.png" alt="UN"/>
+    </div>
+
+    <div class="footer-small-links">
+      <a href="#">Terms</a>
+      <a href="#">Privacy</a>
+      <a href="#">Accessibility</a>
+      <a href="#">Cookies</a>
+    </div>
+
+    <p class="footer-copy">Concern Worldwide, Registered Charity Number: 20009090. Registered in Ireland. 52–55 Lower Camden Street, Dublin 2. D02 H425. Tel: +353 1 417 7700</p>
+  </div>
+</footer>
+
+<!-- BOTTOM DONATION BAR -->
+<div class="bottom-bar" id="bottom-bar">
+  <span class="bottom-bar-label">Change a life today</span>
+  <a href="#" class="bottom-bar-btn">
+    Donate now
+    <span class="bottom-bar-btn-heart">
+      <svg viewBox="0 0 18 16" fill="white" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9 15S1 9.5 1 4.5A4 4 0 0 1 9 2.93 4 4 0 0 1 17 4.5C17 9.5 9 15 9 15z"/>
+      </svg>
+    </span>
+  </a>
+</div>
+
+<script>
+  function toggleBreakdown(btn) {
+    const bd = document.getElementById('money-breakdown');
+    const open = bd.classList.toggle('open');
+    btn.textContent = open ? 'Hide breakdown ▴' : 'See how the rest is spent ▾';
+  }
+
+  // ─── Scroll-aware header + bottom bar ───
+  const header    = document.querySelector('.header');
+  const bottomBar = document.getElementById('bottom-bar');
+
+  let lastY   = 0;
+  let ticking = false;
+  const THRESHOLD = 60;
+
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        const y = window.scrollY;
+
+        if (y <= 10) {
+          header.classList.remove('hidden');
+          bottomBar.classList.remove('visible');
+        } else if (y > lastY && y > THRESHOLD) {
+          // Scrolling DOWN
+          header.classList.add('hidden');
+          bottomBar.classList.add('visible');
+        } else if (y < lastY) {
+          // Scrolling UP
+          header.classList.remove('hidden');
+          bottomBar.classList.remove('visible');
+        }
+
+        lastY   = y;
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }, { passive: true });
+</script>
+
+</body>
+</html>
